@@ -1,173 +1,75 @@
 Assessment Management System
 
-
-
-
-Table of Contents
-
-Overview
+A flexible, configuration-driven system to generate assessment reports in PDF format. Built with Node.js, Express, React, and Tailwind CSS.
 
 Features
 
-Project Structure
+User authentication (signup/login)
 
-Technical Implementation
+API endpoint to generate PDF reports based on session data
 
-Getting Started
+Configurable report templates for different assessment types
 
-Configuration System
+Dynamic field mapping and classification through configuration
 
-Overview
+PDFs saved to local filesystem
 
-The Assessment Management System is a full-stack web application designed to:
-Handle user authentication with JWT-based login and signup.
-Generate PDF reports from pre-existing assessment data.
-Support different assessment types through a flexible, configuration-driven system without modifying code.
-This system allows admins or users to generate structured reports using just a session ID from the dataset.
-
-Features
-Authentication
-User registration (signup) with email & password.
-Secure login using JWT tokens.
-Protected endpoints for report generation.
-PDF Report Generation
-
-Generates PDF reports from existing assessment data.
-
-Supports multiple assessment types using dynamic HTML templates.
-
-Reports are saved locally and accessible via a link.
-
-Flexibility & Configuration
-
-Add new assessment types via JSON configuration.
-
-Map data fields dynamically without code changes.
-
-Configurable classification ranges for metrics.
-
-Fully extendable system for future assessments.
-
-Project Structure
-Assessment-Management/
-├─ backend/                 # Node.js backend
-│  ├─ server.js             # Main server file
-│  ├─ data.js               # Sample assessment dataset
-│  ├─ package.json
-│  └─ reports/              # Generated PDF reports
-├─ frontend/                # React frontend
-│  ├─ src/
-│  │  ├─ api/
-│  │  │  └─ api.js          # Axios API calls
-│  │  ├─ components/
-│  │  │  ├─ Signup.js
-│  │  │  ├─ Login.js
-│  │  │  └─ Dashboard.js
-│  │  └─ App.js
-│  ├─ package.json
-├─ .gitignore
-└─ README.md
-
-Technical Implementation
-Backend
-
-Node.js + Express.js for server and API routing.
-
-JWT for secure authentication.
-
-Puppeteer for PDF generation from dynamic HTML templates.
-
-In-memory data storage (data.js) for users and assessments.
-
-CORS enabled to allow frontend requests.
-
-Frontend
-
-React.js with Tailwind CSS.
-
-Pages include Signup, Login, and Dashboard.
-
-Handles JWT storage in memory and attaches token to API requests.
-
-Generates and shows downloadable PDF report links dynamically.
-
-Getting Started
-Prerequisites
-
-Node.js v22+
-
-npm or yarn
+assessment-management/
+│
+├── backend/
+│   ├── data.js                # Sample assessment data
+│   ├── config.js              # Config-driven mapping for assessment types
+│   ├── server.js              # Express server
+│   ├── auth/
+│   │   ├── userModel.js       # User store
+│   │   ├── authRoutes.js      # Signup & login APIs
+│   ├── reports/
+│   │   ├── reportService.js   # Generate PDF reports
+│   │   ├── templates/
+│   │   │   ├── baseTemplate.html
+│   │   │   ├── fitnessTemplate.html
+│   │   │   ├── cardiacTemplate.html
+│   └── generated_reports/     # Saved PDFs
+│
+└── frontend/                   # React + Tailwind UI
 
 Installation
-
-Clone the repo:
-
-git clone https://github.com/<your-username>/assessment-management.git
-cd assessment-management
-
-
-Install dependencies:
-
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
-npm install
-
-Running the Project
-
 Backend
-
 cd backend
+npm install
 node server.js
 
-
 Frontend
-
 cd frontend
+npm install
 npm start
 
+API Endpoint
+Generate Report
+POST /generate-report
+Parameters: session_id
+Response: Success/failure
 
-The frontend will run at http://localhost:3000 and communicate with the backend at http://localhost:5000.
+Configuration
 
-Configuration System
+Add new assessment types: Update config.js
 
-The system is fully configuration-driven:
+Map fields dynamically: Define JSON paths in configuration
 
-Assessment Types
+Set value ranges or classifications: Configurable in config.js
 
-Each assessment_id can have a unique HTML template defined in the configuration.
+PDF Generation
 
-Field Mapping
+Uses Puppeteer to convert HTML templates into PDFs
 
-Data fields from data.js are mapped dynamically using JSON paths.
+Saved automatically in backend/generated_reports/
 
-Example:
+Notes
 
-{
-  "assessment_id": "A101",
-  "fields": {
-    "accuracy": "accuracy",
-    "bmi": "bodyCompositionData.BMI",
-    "heartRate": "vitalsMap.vitals.heart_rate"
-  }
-}
+Currently uses file-based storage (data.js) instead of a database
 
+MongoDB or other DB integration can be added later
 
-Classification Ranges
-
-Example for BMI classification:
-
-{
-  "BMI": [
-    { "range": [0, 18.5], "label": "Underweight" },
-    { "range": [18.5, 24.9], "label": "Normal" },
-    { "range": [25, 29.9], "label": "Overweight" },
-    { "range": [30, 100], "label": "Obese" }
-  ]
-}
+Frontend provides optional interface to test report generation
 
 
-Adding a new assessment type only requires updating the configuration file; no backend/frontend code changes are needed.
