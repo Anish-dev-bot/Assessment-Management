@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const puppeteer = require("puppeteer");
@@ -7,8 +8,10 @@ const path = require("path");
 
 const assessments = require("./data");
 
-const app = express();
-app.use(bodyParser.json());
+const app = express(); // <-- initialize app first
+
+app.use(cors()); // <-- then use cors
+app.use(bodyParser.json()); // parse JSON requests
 
 const PORT = 5000;
 const JWT_SECRET = "supersecretkey";
@@ -32,7 +35,8 @@ function authenticate(req, res, next) {
 // --- Register ---
 app.post("/auth/register", (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ success: false, error: "Email and password required" });
+  if (!email || !password)
+    return res.status(400).json({ success: false, error: "Email and password required" });
 
   if (users.find(u => u.email === email)) {
     return res.status(400).json({ success: false, error: "User already exists" });
@@ -125,3 +129,4 @@ function generateHTML(assessment) {
 
 // --- Start server ---
 app.listen(PORT, () => console.log(`✅ Assessment Management System Backend is running on port ${PORT}`));
+
